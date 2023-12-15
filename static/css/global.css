@@ -317,6 +317,7 @@ header{
   min-width: 1024px;
   z-index: 9997;
   height: 3.05882rem;
+  -webkit-backdrop-filter: saturate(180%) blur(20px); /* for Safari */
   backdrop-filter: saturate(180%) blur(20px);
 }
 
