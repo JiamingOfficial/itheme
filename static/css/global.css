@@ -7263,14 +7263,16 @@ html.no-touch.no-reduced-motion .tile.tile-list[data-focus-method=key] .media--v
   padding-top: 4px;
   padding-bottom: 4px;
   border-radius: 12px;
-  background: #0071e3;
+  background: #306fdb;
   color: #fff;
   margin-right: 12px;
+  transition: all 0.5s;
 }
 
 .tag:hover {
   text-decoration: none;
-  background: #0077ED;
+  background: #3375e5;
+  transition: all 0.5s;
 }
 
 .article-copyright {
