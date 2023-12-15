@@ -354,7 +354,8 @@ header{
   font-size: 14px;
   font-weight: 500;
   text-decoration: none !important;
-  color: #676b5f;
+  color: #474747;
+  transition: color 0.5s;
 }
 
 @media only screen and (max-width: 734px) {
@@ -430,7 +431,16 @@ a.nav-title:hover {
 
 
 .nav-item-wrapper a:hover {
-  color: #2997ff;
+  color: #000000;
+  transition: color 0.5s;
+}
+.theme-dark .nav-item-content {
+  color: #cccccc; /* 替换为您选择的颜色 */
+  transition: color 0.5s;
+}
+.theme-dark .nav-item-wrapper a:hover {
+  color: #FFFFFF; /* 文字颜色变为白色 */
+  transition: color 0.5s; /* 添加渐变效果 */
 }
 
 .main {

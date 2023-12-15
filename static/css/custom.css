@@ -453,3 +453,6 @@ code {
   display: inline-block;
   margin-right: 1rem;
 }
+.footer-main {
+  display: none;
+}
