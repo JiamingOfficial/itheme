@@ -4,6 +4,11 @@ self.addEventListener('install', event => {
   });
   
   self.addEventListener('fetch', event => {
+    // 只处理来自 HTTP/HTTPS 的请求
+    if (!event.request.url.startsWith('http')) {
+      return; // 不处理非 http/https 的请求（如 chrome-extension://）
+    }
+  
     event.respondWith(
       caches.match(event.request).then(cachedResponse => {
         if (cachedResponse) {
@@ -30,3 +35,4 @@ self.addEventListener('install', event => {
       })
     );
   });
+  
