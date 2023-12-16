@@ -39,9 +39,8 @@ self.addEventListener('fetch', event => {
             return response;
           })
           .catch(error => {
-            // 处理 fetch 请求失败的情况
-            console.error('Fetch failed:', error);
-            // 可以选择在这里返回一个备用响应
+            console.error('Fetch failed for', event.request.url, ':', error);
+            throw error; // 重新抛出错误或返回备用响应
           });
       })
   );
