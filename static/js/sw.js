@@ -3,36 +3,47 @@ self.addEventListener('install', event => {
     console.log('Service Worker installing.');
   });
   
-  self.addEventListener('fetch', event => {
-    // 只处理来自 HTTP/HTTPS 的请求
-    if (!event.request.url.startsWith('http')) {
-      return; // 不处理非 http/https 的请求（如 chrome-extension://）
-    }
-  
-    event.respondWith(
-      caches.match(event.request).then(cachedResponse => {
+self.addEventListener('fetch', event => {
+  // 只处理 HTTP/HTTPS 请求
+  if (!event.request.url.startsWith('http')) {
+    return; // 直接返回，不处理非 HTTP/HTTPS 请求
+  }
+
+  event.respondWith(
+    caches.match(event.request)
+      .then(cachedResponse => {
         if (cachedResponse) {
           // 如果缓存中有匹配的响应，则返回缓存的内容
           return cachedResponse;
         }
-  
-        // 否则，从网络获取资源，并将其动态添加到缓存中
-        return fetch(event.request).then(response => {
-          // 要检查是否获取到了有效的响应
-          if (!response || response.status !== 200 || response.type !== 'basic') {
+
+        // 尝试从网络获取资源
+        return fetch(event.request)
+          .then(response => {
+            // 检查是否获取到了有效的响应
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // 克隆响应以便缓存和浏览器都能使用
+            let responseToCache = response.clone();
+
+            // 确保只缓存 HTTP/HTTPS 请求
+            if (response.url.startsWith('http') || response.url.startsWith('https')) {
+              caches.open('dynamic-cache')
+                .then(cache => {
+                  cache.put(event.request, responseToCache);
+                });
+            }
+
             return response;
-          }
-  
-          // 克隆响应以便缓存和浏览器都能使用
-          let responseToCache = response.clone();
-  
-          caches.open('dynamic-cache').then(cache => {
-            cache.put(event.request, responseToCache);
+          })
+          .catch(error => {
+            // 处理 fetch 请求失败的情况
+            console.error('Fetch failed:', error);
+            // 可以选择在这里返回一个备用响应
           });
-  
-          return response;
-        });
       })
-    );
-  });
+  );
+});
   
