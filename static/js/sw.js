@@ -1,48 +1,44 @@
-self.addEventListener('install', event => {
-    // 这里不进行任何缓存操作
-    console.log('Service Worker installing.');
-  });
-  
-self.addEventListener('fetch', event => {
-  // 只处理 HTTP/HTTPS 请求
-  if (!event.request.url.startsWith('http')) {
-    return; // 直接返回，不处理非 HTTP/HTTPS 请求
-  }
+// sw.js
+const CACHE_NAME = 'dynamic-cache-v1';
 
-  event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
-        if (cachedResponse) {
-          // 如果缓存中有匹配的响应，则返回缓存的内容
-          return cachedResponse;
-        }
-
-        // 尝试从网络获取资源
-        return fetch(event.request)
-          .then(response => {
-            // 检查是否获取到了有效的响应
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // 克隆响应以便缓存和浏览器都能使用
-            let responseToCache = response.clone();
-
-            // 确保只缓存 HTTP/HTTPS 请求
-            if (response.url.startsWith('http') || response.url.startsWith('https')) {
-              caches.open('dynamic-cache')
-                .then(cache => {
-                  cache.put(event.request, responseToCache);
-                });
-            }
-
-            return response;
-          })
-          .catch(error => {
-            console.error('Fetch failed for', event.request.url, ':', error);
-            throw error; // 重新抛出错误或返回备用响应
-          });
-      })
-  );
+// 安装 Service Worker 时的操作
+self.addEventListener('install', (event) => {
+    // 此示例中不执行特定安装步骤，但可以在此添加预缓存资源等
+    console.log('Service Worker 安装成功');
 });
-  
+
+// 激活 Service Worker 时的操作
+self.addEventListener('activate', (event) => {
+    console.log('Service Worker 激活成功');
+    // 清理旧缓存
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.filter((cacheName) => {
+                    // 清除不属于当前版本的缓存
+                    return cacheName !== CACHE_NAME;
+                }).map((cacheName) => {
+                    return caches.delete(cacheName);
+                })
+            );
+        })
+    );
+});
+
+// 拦截网络请求
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.open(CACHE_NAME).then((cache) => {
+            return fetch(event.request)
+                .then((response) => {
+                    // 复制一份响应并存储在缓存中
+                    cache.put(event.request, response.clone());
+                    return response;
+                })
+                .catch(() => {
+                    // 当网络请求失败时，尝试从缓存中获取
+                    return cache.match(event.request);
+                });
+        })
+    );
+});
