@@ -1,21 +1,32 @@
-#modal-wrapper{
+#modal-wrapper {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(25,25,25,0.3);
+  background: rgba(245, 245, 245, 0.3);
   z-index: 999;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(20px);
 }
 
-.modal-body{
-  width: 50%;
-  transform: translateX(50%);
-  margin-top: 10vh;
+.modal-body {
+  width: 40%;
+  transform: translate(-50%, -50%);
+  top: 20%; /* 调整位置到页面中间偏上 */
+  left: 50%;
+  position: fixed;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background-color: #fff;
 }
 
-.aa-Panel{
+.aa-Panel {
   position: fixed !important;
-  z-index: 999;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px; /* 增加圆角大小 */
+  /* 如有其他边框颜色的定义，也在此处移除 */
 }
